@@ -1,0 +1,8 @@
+internal_flash_driver.c:276:15:flash_busy	3
+internal_flash_driver.c:302:15:eop_flag	3
+internal_flash_driver.c:329:26:is_flash_ready	3
+internal_flash_driver.c:33:19:flash_driver_init	2
+internal_flash_driver.c:62:19:flash_driver_erase	4
+internal_flash_driver.c:110:19:flash_driver_write_data	7
+internal_flash_driver.c:191:19:flash_driver_read_data	4
+internal_flash_driver.c:251:10:get_page	4

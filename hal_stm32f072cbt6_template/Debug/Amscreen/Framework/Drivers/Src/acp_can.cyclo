@@ -1,0 +1,5 @@
+acp_can.c:169:31:can_handle_to_can_assignment_index	2
+acp_can.c:67:6:acp_can_init	2
+acp_can.c:88:6:acp_can_set_board_address	4
+acp_can.c:127:6:acp_can_transmit	1
+acp_can.c:148:6:acp_can_receive	2

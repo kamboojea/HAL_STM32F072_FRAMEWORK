@@ -1,0 +1,2 @@
+../Amscreen/Framework/Libs/Src/millis.c:23:6:millis_timeout	16	static
+../Amscreen/Framework/Libs/Src/millis.c:38:10:millis	8	static

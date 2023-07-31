@@ -1,0 +1,5 @@
+led.c:22:6:led_init	1
+led.c:38:6:led_update	5
+led.c:69:6:led_set_flash_rate	1
+led.c:83:6:led_on	1
+led.c:96:6:led_off	1

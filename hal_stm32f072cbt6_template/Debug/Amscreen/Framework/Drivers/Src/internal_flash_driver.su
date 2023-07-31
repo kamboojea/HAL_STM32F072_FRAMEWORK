@@ -1,0 +1,8 @@
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:276:15:flash_busy	16	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:302:15:eop_flag	16	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:329:26:is_flash_ready	8	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:33:19:flash_driver_init	0	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:62:19:flash_driver_erase	32	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:110:19:flash_driver_write_data	24	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:191:19:flash_driver_read_data	24	static
+../Amscreen/Framework/Drivers/Src/internal_flash_driver.c:251:10:get_page	0	static

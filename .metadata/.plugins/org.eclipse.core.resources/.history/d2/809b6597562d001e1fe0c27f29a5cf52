@@ -1,0 +1,43 @@
+/**
+ * @file millis
+ * @brief This file contains the implementation for the millis functions.
+ *
+ * @author Lee
+ * @date Jan 20, 2023
+ */
+
+#include "stm32f1xx_hal.h"
+#include "millis.h"
+
+/*****************************************************************************
+   Functions
+*****************************************************************************/
+
+/**
+ * @brief Checks if a certain amount of time has passed since a given reference time.
+ *
+ * @param[in] reference_time A pointer to the reference time in milliseconds.
+ * @param[in] interval The time interval in milliseconds to check against.
+ * @return true if the interval has passed, false otherwise.
+ */
+bool millis_timeout(millis_t* reference_time, millis_t interval)
+{
+    if (HAL_GetTick() - *reference_time > interval)
+    {
+        *reference_time = HAL_GetTick();
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @brief Returns the current systick in milliseconds
+ *
+ * @return The current systick value in milliseconds.
+ */
+millis_t millis(void)
+{
+    return HAL_GetTick();
+}
+
+

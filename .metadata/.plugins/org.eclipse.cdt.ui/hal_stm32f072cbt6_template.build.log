@@ -1,0 +1,31 @@
+15:55:13 **** Incremental Build of configuration Debug for project hal_stm32f072cbt6_template ****
+make -j8 all 
+arm-none-eabi-gcc "../Amscreen/Framework/Drivers/Src/acp_can.c" -mcpu=cortex-m0 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F072xB -c -I../Core/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I../Drivers/CMSIS/Include -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc" -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Libs/Inc" -Og -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Amscreen/Framework/Drivers/Src/acp_can.d" -MT"Amscreen/Framework/Drivers/Src/acp_can.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Amscreen/Framework/Drivers/Src/acp_can.o"
+arm-none-eabi-gcc "../Amscreen/Framework/Drivers/Src/debug.c" -mcpu=cortex-m0 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F072xB -c -I../Core/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I../Drivers/CMSIS/Include -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc" -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Libs/Inc" -Og -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Amscreen/Framework/Drivers/Src/debug.d" -MT"Amscreen/Framework/Drivers/Src/debug.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Amscreen/Framework/Drivers/Src/debug.o"
+arm-none-eabi-gcc "../Amscreen/Framework/Drivers/Src/internal_flash_driver.c" -mcpu=cortex-m0 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F072xB -c -I../Core/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I../Drivers/CMSIS/Include -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc" -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Libs/Inc" -Og -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Amscreen/Framework/Drivers/Src/internal_flash_driver.d" -MT"Amscreen/Framework/Drivers/Src/internal_flash_driver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Amscreen/Framework/Drivers/Src/internal_flash_driver.o"
+arm-none-eabi-gcc "../Amscreen/Framework/Drivers/Src/uart.c" -mcpu=cortex-m0 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F072xB -c -I../Core/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc -I../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I../Drivers/CMSIS/Include -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc" -I"C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Libs/Inc" -Og -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Amscreen/Framework/Drivers/Src/uart.d" -MT"Amscreen/Framework/Drivers/Src/uart.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Amscreen/Framework/Drivers/Src/uart.o"
+../Amscreen/Framework/Drivers/Src/acp_can.c: In function 'can_handle_to_can_assignment_index':
+../Amscreen/Framework/Drivers/Src/acp_can.c:171:27: error: 'CAN1' undeclared (first use in this function); did you mean 'CAN'?
+  171 |     if (hcan->Instance == CAN1)
+      |                           ^~~~
+      |                           CAN
+../Amscreen/Framework/Drivers/Src/acp_can.c:171:27: note: each undeclared identifier is reported only once for each function it appears in
+In file included from C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc/debug.h:13,
+                 from ../Amscreen/Framework/Drivers/Src/debug.c:12:
+C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc/uart.h:11:10: fatal error: usart.h: No such file or directory
+   11 | #include "usart.h"
+      |          ^~~~~~~~~
+compilation terminated.
+make: *** [Amscreen/Framework/Drivers/Src/subdir.mk:37: Amscreen/Framework/Drivers/Src/acp_can.o] Error 1
+make: *** Waiting for unfinished jobs....
+In file included from ../Amscreen/Framework/Drivers/Src/uart.c:6:
+C:/Projects/Firmwares/Signs/wafer/V2/HAL_template/HAL_STM32F072_FRAMEWORK/hal_stm32f072cbt6_template/Amscreen/Framework/Drivers/Inc/uart.h:11:10: fatal error: usart.h: No such file or directory
+   11 | #include "usart.h"
+      |          ^~~~~~~~~
+compilation terminated.
+make: *** [Amscreen/Framework/Drivers/Src/subdir.mk:37: Amscreen/Framework/Drivers/Src/debug.o] Error 1
+make: *** [Amscreen/Framework/Drivers/Src/subdir.mk:37: Amscreen/Framework/Drivers/Src/uart.o] Error 1
+"make -j8 all" terminated with exit code 2. Build might be incomplete.
+
+15:55:13 Build Failed. 7 errors, 0 warnings. (took 415ms)
+

@@ -1,0 +1,5 @@
+../Amscreen/Framework/Libs/Src/circular_buf.c:16:6:circular_buf_init	0	static
+../Amscreen/Framework/Libs/Src/circular_buf.c:31:6:circular_buf_is_empty	0	static
+../Amscreen/Framework/Libs/Src/circular_buf.c:43:6:circular_buf_is_full	0	static
+../Amscreen/Framework/Libs/Src/circular_buf.c:63:6:circular_buf_insert	16	static
+../Amscreen/Framework/Libs/Src/circular_buf.c:86:6:circular_buf_remove	16	static

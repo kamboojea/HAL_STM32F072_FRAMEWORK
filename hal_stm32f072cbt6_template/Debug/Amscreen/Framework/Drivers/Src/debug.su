@@ -1,0 +1,2 @@
+../Amscreen/Framework/Drivers/Src/debug.c:35:6:debug_printf	24	static
+../Amscreen/Framework/Drivers/Src/debug.c:48:7:debug_acp_packet_to_string	88	static

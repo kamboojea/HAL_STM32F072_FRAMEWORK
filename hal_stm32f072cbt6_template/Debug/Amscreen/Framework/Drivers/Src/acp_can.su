@@ -1,0 +1,5 @@
+../Amscreen/Framework/Drivers/Src/acp_can.c:169:31:can_handle_to_can_assignment_index	0	static
+../Amscreen/Framework/Drivers/Src/acp_can.c:67:6:acp_can_init	16	static
+../Amscreen/Framework/Drivers/Src/acp_can.c:88:6:acp_can_set_board_address	56	static
+../Amscreen/Framework/Drivers/Src/acp_can.c:127:6:acp_can_transmit	40	static
+../Amscreen/Framework/Drivers/Src/acp_can.c:148:6:acp_can_receive	48	static

@@ -1,0 +1,79 @@
+/**
+ * @file uart.h
+ * @brief Header file for UART driver
+ */
+#ifndef DRIVERS_INC_UART_H_
+#define DRIVERS_INC_UART_H_
+
+#include <stdbool.h>
+#include <stdint.h>
+#include "stm32f0xx.h"
+#include "usart.h"
+#include "circular_buf.h"
+
+/**
+ * @brief Structure representing UART peripheral and its buffers
+ */
+typedef struct {
+	const char *name; /**< Name of the device */
+    UART_HandleTypeDef *huart; /**< Pointer to UART handle */
+    circular_buf_t *rx_buffer; /**< Pointer to receive circular buffer */
+    circular_buf_t *tx_buffer; /**< Pointer to transmit circular buffer */
+} uart_t;
+
+/**
+ * @brief Initializes the UART driver
+ * @param me Pointer to the UART driver instance
+ * @param name Name of the device
+ * @param huart Pointer to the UART handle
+ * @param rx_buffer Pointer to the receive circular buffer
+ * @param tx_buffer Pointer to the transmit circular buffer
+ * @return True if initialization is successful, false otherwise
+ */
+bool uart_init(uart_t * const me, UART_HandleTypeDef *huart, const char *name, circular_buf_t * const rx_buffer, circular_buf_t * const tx_buffer);
+
+/**
+ * @brief Receives a byte from the UART
+ * @param me Pointer to the UART driver instance
+ * @param byte Pointer to the location where received byte will be stored
+ * @return True if byte is received successfully, false otherwise
+ */
+bool uart_rx_byte(uart_t * const me, uint8_t *byte);
+
+/**
+ * @brief Transmits a byte over the UART
+ * @param me Pointer to the UART driver instance
+ * @param byte Byte to be transmitted
+ * @return True if byte is transmitted successfully, false otherwise
+ */
+bool uart_tx_byte(uart_t * const me, uint8_t byte);
+
+/**
+ * @brief Transmits a buffer of data over the UART
+ * @param me Pointer to the UART driver instance
+ * @param buffer Pointer to the data buffer to be transmitted
+ * @param size Number of bytes to be transmitted
+ * @return True if buffer is transmitted successfully, false otherwise
+ */
+bool uart_tx_buffer(uart_t * const me, uint8_t *buffer, uint16_t size);
+
+/**
+ * @brief Transmits a null-terminated string over the UART
+ * @param me Pointer to the UART driver instance
+ * @param str Pointer to the null-terminated string to be transmitted
+ * @return True if string is transmitted successfully, false otherwise
+ */
+bool uart_tx_string(uart_t * const me, char *str);
+
+/**
+  * @brief  This function handles UART interrupt request.
+  * @param  huart  Pointer to a UART_HandleTypeDef structure that contains
+  *                the configuration information for the specified UART module.
+  * @details This function is called when a UART interrupt occurs. It reads the
+  * 		 received data from the UART's RX buffer and writes data from the
+  * 		 UART TX buffer to the UART's data register. If there is no data to
+  * 		 transmit, the TX interrupt is disabled.
+  */
+void uart_isr (UART_HandleTypeDef *huart);
+
+#endif /* DRIVERS_INC_UART_H_ */

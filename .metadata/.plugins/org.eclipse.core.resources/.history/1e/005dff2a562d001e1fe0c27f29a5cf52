@@ -1,0 +1,40 @@
+/*
+ * acp_can.h
+ *
+ *  Created on: Apr 3, 2023
+ *      Author: LDavies
+ */
+#ifndef DRIVERS_INC_ACP_CAN_H_
+#define DRIVERS_INC_ACP_CAN_H_
+
+#include <stdbool.h>
+#include <stdint.h>
+#include "stm32f1xx.h"
+#include "acp_packet.h"
+
+
+/*****************************************************************************
+   Defines
+*****************************************************************************/
+
+/**
+ * @brief Structure representing CAN peripheral and its buffers
+ */
+typedef struct {
+	const char *name; 				/**< Name of the device */
+	CAN_HandleTypeDef *hcan; 		/**< Pointer to CAN handle */
+	uint16_t address;				/**< CAN/board address for CAN handle */
+} acp_can_t;
+
+
+
+/*****************************************************************************
+   Functions
+*****************************************************************************/
+bool acp_can_init(acp_can_t * const me, CAN_HandleTypeDef *hcan, const char *name);
+bool acp_can_set_board_address(acp_can_t * me, uint16_t address);
+uint16_t acp_can_get_board_address(acp_can_t * me);
+bool acp_can_transmit(acp_can_t * me, acp_packet_t *acp_packet);
+bool acp_can_receive(acp_can_t * me, acp_packet_t *acp_packet);
+
+#endif /* DRIVERS_INC_ACP_CAN_H_ */
