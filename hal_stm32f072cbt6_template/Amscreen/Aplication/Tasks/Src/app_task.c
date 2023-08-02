@@ -7,7 +7,8 @@
  *  ToDo: Check resources available and investigate using FreeRTOS
  */
 #include "led_task.h"
-
+#include "acp_commands.h"
+#include "acp_can_task.h"
 
 
 /*****************************************************************************
@@ -47,6 +48,7 @@ void app_init(void)
 }
 
 
+
 /**
  * @brief The main application task function.
  *
@@ -55,5 +57,6 @@ void app_init(void)
  */
 void app_task(void)
 {
+	acp_can_task();
 	led_task();
 }

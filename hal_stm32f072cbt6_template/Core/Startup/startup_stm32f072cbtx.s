@@ -87,6 +87,8 @@ LoopFillZerobss:
 
 /* Call static constructors */
   bl __libc_init_array
+  /* Call vectors_to_ram */
+  bl 	vectors_to_ram
 /* Call the application's entry point.*/
   bl main
 

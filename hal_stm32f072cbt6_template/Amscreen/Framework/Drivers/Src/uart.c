@@ -51,6 +51,7 @@ static inline void assign_uart(uart_t *uart);
 /*****************************************************************************
    Functions
 *****************************************************************************/
+
 /**
  * @brief Initializes the UART driver
  * @param me Pointer to the UART driver instance

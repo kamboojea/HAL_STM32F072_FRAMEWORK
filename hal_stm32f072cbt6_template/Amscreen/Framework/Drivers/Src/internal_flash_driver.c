@@ -10,22 +10,27 @@
 /*****************************************************************************
    Libraries
 *****************************************************************************/
+#include <stdbool.h>
 #include "stm32f0xx_hal.h"
 #include "internal_flash_driver.h"
 #include "millis.h"
-#include "acp_types.h"
+
+
 /*****************************************************************************
    Defines
 ******************************************************************************/
 #define SAMPLE_TIMEOUT 50
 
+
 /*****************************************************************************
    Function Prototypes
 ******************************************************************************/
 uint32_t get_page(uint32_t address);
-static bool_t flash_busy(void);
-static bool_t eop_flag(void);
+static bool flash_busy(void);
+static bool eop_flag(void);
 static HAL_StatusTypeDef is_flash_ready(void);
+
+
 /*****************************************************************************
    Functions
 ******************************************************************************/
@@ -36,18 +41,20 @@ HAL_StatusTypeDef flash_driver_init(
 									uint32_t num_sectors,
 									HAL_StatusTypeDef (*erase)(internal_flash_driver_t *dev),
                                     HAL_StatusTypeDef (*write)(uint32_t address, uint16_t *data, uint16_t length),
+									HAL_StatusTypeDef (*write_option_byte)(OptionByteData* option_bytes, uint8_t num_bytes),
                                     HAL_StatusTypeDef (*read)(uint32_t address, volatile uint16_t *data, uint16_t length)
 									)
 {
-	if (dev == NULL)
-    {
-        return HAL_ERROR;
+    if (dev == NULL)
+	{
+	    return HAL_ERROR;
     }
 
     dev->start_sector = start_sector;
     dev->num_sectors = num_sectors;
     dev->erase = erase;
     dev->write = write;
+    dev->write_option_byte = write_option_byte;
     dev->read = read;
 
     return HAL_OK;
@@ -61,35 +68,35 @@ HAL_StatusTypeDef flash_driver_init(
  */
 HAL_StatusTypeDef flash_driver_erase(internal_flash_driver_t *dev)
 {
+	// Check if the device pointer is NULL
 	if (dev == NULL)
 	{
-		return  HAL_ERROR;
+		return HAL_ERROR; // Return error status if device pointer is NULL
 	}
 
     uint32_t sector_error = 0;
     FLASH_EraseInitTypeDef erase_init_struct;
 
-    erase_init_struct.TypeErase     = FLASH_TYPEERASE_PAGES;
-    erase_init_struct.PageAddress   = dev->start_sector;
-    erase_init_struct.NbPages       = dev->num_sectors;
+    erase_init_struct.TypeErase     = FLASH_TYPEERASE_PAGES; // Set the erase type to erase pages
+    erase_init_struct.PageAddress   = dev->start_sector; // Set the start address of the sector to be erased
+    erase_init_struct.NbPages       = dev->num_sectors; // Set the number of sectors to be erased
 
-    HAL_StatusTypeDef status = HAL_FLASH_Unlock();
-
-    if (status != HAL_OK)
-    {
-    	return status;
-    }
-
-    status = HAL_FLASHEx_Erase(&erase_init_struct, &sector_error);
+    HAL_StatusTypeDef status = HAL_FLASH_Unlock(); // Unlock the flash for erase operation
 
     if (status != HAL_OK)
     {
-    	return status;
+    	return status; // Return status if unlocking the flash failed
     }
 
-    status = HAL_FLASH_Lock();
+    status = HAL_FLASHEx_Erase(&erase_init_struct, &sector_error); // Erase the specified flash sectors
 
-    return status;
+    if (status != HAL_OK)
+    {
+    	return status; // Return status if erasing the sectors failed
+    }
+
+    // Lock the flash after erase operation
+    return HAL_FLASH_Lock();
 }
 
 
@@ -106,7 +113,6 @@ HAL_StatusTypeDef flash_driver_erase(internal_flash_driver_t *dev)
  *
  * @return HAL_StatusTypeDef HAL_OK if the write operation is successful, an error code otherwise.
  */
-/* Program the user Flash area half-word by half-word */
 HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint16_t *data, uint16_t numberofbytes)
 {
     /* Counter for the number of bytes written so far */
@@ -120,112 +126,162 @@ HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint16_t 
     	return status;
     }
 
-    while (sofar < (numberofbytes/2))  // Dividing by 2 to write 2 bytes per iteration
-    	{
-		   /* Prepare the 16-bit data to write */
-		   uint16_t halfword_data = data[sofar];
-		   // Swap the byte order
-		   uint16_t swapped_data = ((halfword_data & 0xFF) << 8) | ((halfword_data >> 8) & 0xFF);
+    while (sofar < (numberofbytes / 2))  // Dividing by 2 to write 2 bytes per iteration
+    {
+        /* Prepare the 16-bit data to write */
+        uint16_t halfword_data = data[sofar];
 
-		   status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, swapped_data);
+        status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
 
-		   if (status != HAL_OK)
-		   {
-			/* Error occurred while writing data in Flash memory. Return the HAL error code */
+        if (status != HAL_OK)
+	    {
+		    /* Error occurred while writing data in Flash memory. Return the HAL error code */
 			return HAL_FLASH_GetError();
-		   }
-		   else
-		   {
-			/* Increment address index and written bytes count */
-			start_page_address += 2;
-			sofar++;
+		}
 
-			status = is_flash_ready();
+        /* Increment address index and written bytes count */
+        start_page_address += 2;
+        sofar++;
+		status = is_flash_ready();
 
-			if(status != HAL_OK)
-			{
-					return status;
-			}
-		   }
-	   }
+		if (status != HAL_OK)
+        {
+			return status;
+        }
+    }
 
-	   /* If the number of bytes is odd, write the remaining byte */
-	   if (numberofbytes & 1) // Check if the LSB is set
-	   {
-		   /* Prepare the 16-bit data to write with padding byte (0xFF) */
-		   uint16_t halfword_data = (data[sofar] & 0xFF) | 0xFFFF;
 
-		   status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
+    /* If the number of bytes is odd, write the remaining byte */
+    if (numberofbytes & 1)
+    {
+        /* Prepare the 16-bit data to write with padding byte (0xFF) */
+        uint16_t halfword_data = (data[sofar] & 0xFF) | 0xFFFF;
 
-		   if (status != HAL_OK)
-		   {
-			/* Error occurred while writing data in Flash memory. Return the HAL error code */
+    	status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
+
+    	if (status != HAL_OK)
+        {
+    		/* Error occurred while writing data in Flash memory. Return the HAL error code */
 			return HAL_FLASH_GetError();
-		   }
-		   else
-		   {
-			/* Increment address index and written bytes count */
+        }
+        else
+        {
+    		/* Increment address index and written bytes count */
 			start_page_address += 2;
-		   }
-	   }
-	   /* Lock the Flash to disable the flash control register access (recommended
-	   to protect the FLASH memory against possible unwanted operation) */
-	   status = HAL_FLASH_Lock();
-	   /* Return HAL_OK to indicate success */
-	   return status;
+        }
+    }
+
+    // Lock the flash to disable the flash control register access
+    return HAL_FLASH_Lock();
 }
 
 
+HAL_StatusTypeDef flash_driver_write_data_option_bytes(OptionByteData* option_bytes, uint8_t num_bytes)
+{
+    if (option_bytes == NULL || num_bytes == 0)
+    {
+        return HAL_ERROR;
+    }
+
+    // Unlock the FLASH memory
+    if (HAL_FLASH_Unlock() != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+
+    // Unlock the option bytes
+    if (HAL_FLASH_OB_Unlock() != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+
+    // Erase option bytes
+    if (HAL_FLASHEx_OBErase() != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+
+    // Program each option byte
+    for (uint8_t i = 0; i < num_bytes; i++)
+    {
+        FLASH_OBProgramInitTypeDef option_byte;
+        option_byte.DATAAddress = option_bytes[i].address;
+        option_byte.DATAData = option_bytes[i].data;
+        option_byte.OptionType = OPTIONBYTE_DATA;
+
+        if (HAL_FLASHEx_OBProgram(&option_byte) != HAL_OK)
+        {
+            return HAL_ERROR;
+        }
+    }
+
+    // Lock the option bytes
+    if (HAL_FLASH_OB_Lock() != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+
+    // Lock the FLASH memory
+    if (HAL_FLASH_Lock() != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+
+    return HAL_OK;
+}
+
+
+
 /**
-* @brief  Read data from flash memory
-*
-* @param  start_page_address Start address of the page from where the reading starts in flash
-* @param  rx_buffer           Pointer to a buffer where read data will be stored
-* @param  numberofwords   Number of words to read from flash
-*
-* @note   This function reads 32-bit words from flash memory starting from the provided address
-*         and stores them into the provided buffer. It reads a specified number of words.
-*         If the function reaches the end of flash memory before reading the specified number
-*         of words, it will stop reading.
-*/
+ * @brief  Read data from flash memory
+ *
+ * @param  start_page_address Start address of the page from where the reading starts in flash
+ * @param  rx_buffer           Pointer to a buffer where read data will be stored
+ * @param  numberofwords   Number of words to read from flash
+ *
+ * @note   This function reads 32-bit words from flash memory starting from the provided address
+ *         and stores them into the provided buffer. It reads a specified number of words.
+ *         If the function reaches the end of flash memory before reading the specified number
+ *         of words, it will stop reading.
+ */
 HAL_StatusTypeDef flash_driver_read_data(uint32_t start_page_address, volatile uint16_t *rx_buffer, uint16_t numberofwords)
 {
 	 // Check if the device instance is valid
 	if (rx_buffer == NULL)
 	{
 		return HAL_ERROR; // Return error if the device instance is not valid
-	}
+    }
 
 	int16_t index = 0;
 
-   while (TRUE)
-   {
-   	HAL_StatusTypeDef status = is_flash_ready();
+    while (true)
+    {
+   	    HAL_StatusTypeDef status = is_flash_ready();
 
-   	if(status != HAL_OK)
-   	{
+   	    if(status != HAL_OK)
+    	{
 			return status;
 		}
-       // Dereference the start_page_address, read the 32-bit word,
-       // and assign it to the location pointed to by rx_buffer
-   	uint16_t data = *(__IO uint16_t *)start_page_address;
-       uint16_t swapped_data = ((data & 0xFF) << 8) | ((data >> 8) & 0xFF);
 
-       // Move to the next word in flash memory by adding 4 (size of uint32_t) to start_page_address
-       start_page_address += 2;
+        // Dereference the start_page_address, read the 32-bit word,
+        // and assign it to the location pointed to by rx_buffer
+    	uint16_t data = *(__IO uint16_t *)start_page_address;
+        uint16_t swapped_data = ((data & 0xFF) << 8) | ((data >> 8) & 0xFF);
 
-       // Move to the next location in rx_buffer
-       rx_buffer[index] = swapped_data;
+        // Move to the next word in flash memory by adding 4 (size of uint32_t) to start_page_address
+        start_page_address += 2;
 
-       index++;
+        // Move to the next location in rx_buffer
+        rx_buffer[index] = swapped_data;
+        index++;
 
-       // Decrement numberofwords. If it reaches 0, break out of the loop.
-       if (!(numberofwords--))
-       {
-       	break;
-       }
-   }
-   return HAL_OK;
+        // Decrement numberofwords. If it reaches 0, break out of the loop.
+        if (!(numberofwords--))
+        {
+        	break;
+        }
+    }
+    return HAL_OK;
 }
 
 
@@ -250,18 +306,18 @@ HAL_StatusTypeDef flash_driver_read_data(uint32_t start_page_address, volatile u
  */
 uint32_t get_page(uint32_t address)
 {
-  /* Loop over the 128 pages */
-  for (int indx=0; indx<128; indx++)
-  {
-    /* Check if the address falls within the current page */
-    if((address < (0x08000000 + (FLASH_PAGE_SIZE *(indx+1))) ) && (address >= (0x08000000 + FLASH_PAGE_SIZE*indx)))
+    /* Loop over the 128 pages */
+    for (int indx=0; indx<128; indx++)
     {
-      /* If the address is within the current page, return the page start address */
-      return (0x08000000 + FLASH_PAGE_SIZE*indx);
+        /* Check if the address falls within the current page */
+        if ((address < (0x08000000 + (FLASH_PAGE_SIZE *(indx+1))) ) && (address >= (0x08000000 + FLASH_PAGE_SIZE*indx)))
+        {
+            /* If the address is within the current page, return the page start address */
+            return (0x08000000 + FLASH_PAGE_SIZE*indx);
+        }
     }
-  }
-  /* If the address does not fall within any page, return 0 */
-  return 0;
+    /* If the address does not fall within any page, return 0 */
+    return 0;
 }
 
 
@@ -271,23 +327,20 @@ uint32_t get_page(uint32_t address)
  * This function checks the busy flag of the flash memory and waits until the write operation is completed
  * or a timeout occurs. The timeout duration is defined by SAMPLE_TIMEOUT.
  *
- * @return 1 if the flash memory is still busy, 0 if the write operation is completed or a timeout occurs.
+ * @return TRUE if the flash memory is still busy, FALSE if the write operation is completed or a timeout occurs.
  */
-static bool_t flash_busy(void)
+static bool flash_busy(void)
 {
     uint32_t sample_timer = millis(); // Start the timer
-    volatile int busy_flag = (__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) == TRUE); // Check the busy flag
+    volatile bool busy_flag; // Check the busy flag
 
-    while (busy_flag)
+    do
     {
-        busy_flag = (__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) == TRUE); // Check the busy flag
+        busy_flag = __HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY); // Check the busy flag
 
-        if (millis_timeout(&sample_timer, SAMPLE_TIMEOUT))
-        {
-            return SET; // Timeout occurred
-        }
-    }
-    return RESET ; // Write operation completed
+    } while (busy_flag || millis_timeout(&sample_timer, SAMPLE_TIMEOUT));
+
+    return busy_flag ; // Write operation completed
 }
 
 
@@ -297,23 +350,20 @@ static bool_t flash_busy(void)
  * This function checks the EOP flag status by repeatedly sampling the flag
  * until it is cleared or a timeout occurs.
  *
- * @return 0 if the EOP flag is cleared within the timeout, 1 otherwise.
+ * @return False if the EOP flag is cleared within the timeout, True otherwise.
  */
-static bool_t eop_flag(void)
+static bool eop_flag(void)
 {
     uint32_t sample_timer = millis(); /**< Variable to store the current time in milliseconds. */
-    volatile int eop_flag = (__HAL_FLASH_GET_FLAG(FLASH_FLAG_EOP) == FALSE); /**< Flag indicating the EOP status. */
+    volatile bool eop_flag ; /**< Flag indicating the EOP status. */
 
-    while (eop_flag)
+    do
     {
-        eop_flag = (__HAL_FLASH_GET_FLAG(FLASH_FLAG_EOP) == FALSE); /**< Update the EOP flag status. */
+        eop_flag = __HAL_FLASH_GET_FLAG(FLASH_FLAG_EOP); /**< Update the EOP flag status. */
 
-        if (millis_timeout(&sample_timer, SAMPLE_TIMEOUT))
-        {
-            return SET; /**< Timeout occurred, return 1 indicating failure. */
-        }
-    }
-    return RESET; /**< EOP flag cleared within the timeout, return 0 indicating success. */
+    } while (eop_flag || millis_timeout(&sample_timer, SAMPLE_TIMEOUT));
+
+    return eop_flag; /**< EOP flag cleared within the timeout, return 0 indicating success. */
 }
 
 
@@ -338,11 +388,7 @@ static HAL_StatusTypeDef is_flash_ready(void)
     {
         /* Clear the EOP flag */
         __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
-    }
-    else
-    {
         return HAL_BUSY; /**< EOP flag is set, return HAL_BUSY. */
     }
     return HAL_OK; /**< Flash memory is ready for operations, return HAL_OK. */
 }
-

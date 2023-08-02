@@ -50,7 +50,7 @@ void led_update(led_t* const led)
     }
     else
     {
-        if (millis_timeout(&led->timer, led->on_period))
+        if (millis_timeout(&led->timer, led->off_period))
         {
             led->state = true;
             HAL_GPIO_WritePin(led->port, led->pin, GPIO_PIN_SET);

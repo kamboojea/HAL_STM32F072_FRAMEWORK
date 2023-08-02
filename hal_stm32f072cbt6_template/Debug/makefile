@@ -12,9 +12,11 @@ RM := rm -rf
 -include Drivers/STM32F0xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
+-include Amscreen/Framework/Task/Src/subdir.mk
 -include Amscreen/Framework/Libs/Src/subdir.mk
 -include Amscreen/Framework/Drivers/Src/subdir.mk
 -include Amscreen/Aplication/Tasks/Src/subdir.mk
+-include Amscreen/Aplication/Libs/Src/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

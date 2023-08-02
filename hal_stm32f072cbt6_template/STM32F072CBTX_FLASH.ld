@@ -44,13 +44,39 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 16K
-  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 128K
+   RAM (xrw)        : ORIGIN = 0x200000C0, LENGTH = 16K - 192
+   BOOTLOADER (rx)	: ORIGIN = 0x08000000, LENGTH = 4K
+   APPLICATION (rx)	: ORIGIN = 0x08001000, LENGTH = 62K
+
 }
+
+/* application start address symbol */
+_application_start_address = 0x08001000;
+
+/* For main application, change BOOTLOADER by FIRMWARE */
+REGION_ALIAS("FLASH", APPLICATION);
+
 
 /* Sections */
 SECTIONS
 {
+ .reset :
+  {
+    . = ALIGN(4);
+    KEEP(*(.vector_table))
+    . = ALIGN(4);
+  } >BOOTLOADER
+   
+  /* Fill the region between the reset vector and the start of the application. 
+     This prevents Eclipse flash programming from failing due to unerased pages */
+  .bootfill :
+  {
+    FILL(0xFFFFFFFF);
+    . = ORIGIN(BOOTLOADER) + LENGTH(BOOTLOADER) - 1;
+    BYTE(0xAA)
+    ___ROM_AT = .;
+  } >BOOTLOADER
+
   /* The startup code into "FLASH" Rom type memory */
   .isr_vector :
   {
@@ -145,6 +171,21 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
 
   } >RAM AT> FLASH
+
+ .appfill :
+  {
+    FILL(0xFFFFFFFF);
+    . = ORIGIN(FLASH) + LENGTH(FLASH) - 33;
+    BYTE(0xAA)
+    ___ROM_AT = .;
+  } >FLASH
+
+ /* Place version in known place allowing 64 bytes for this structure include the CRC32 checksum which occupies the last four bytes. */ 
+  .version _application_start_address + LENGTH(APPLICATION) - 32:    
+  {
+     KEEP(*(.version))
+  } >FLASH
+
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);

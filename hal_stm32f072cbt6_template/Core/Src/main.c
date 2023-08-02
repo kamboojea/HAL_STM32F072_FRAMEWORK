@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "app_task.h"
 
 /* USER CODE END Includes */
 
@@ -102,11 +103,10 @@ int main(void)
   while (1)
   {
 	  app_task();
-
 	  // Refresh the Watchdog timer
 	  HAL_IWDG_Refresh(&hiwdg);
 
-	  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }

@@ -1,7 +1,7 @@
-../Amscreen/Framework/Drivers/Src/uart.c:206:32:usart_handle_to_uart_assignment_index	0	static
-../Amscreen/Framework/Drivers/Src/uart.c:63:6:uart_init	24	static
-../Amscreen/Framework/Drivers/Src/uart.c:96:6:uart_rx_byte	8	static
-../Amscreen/Framework/Drivers/Src/uart.c:108:6:uart_tx_byte	8	static
-../Amscreen/Framework/Drivers/Src/uart.c:126:6:uart_tx_buffer	16	static
-../Amscreen/Framework/Drivers/Src/uart.c:143:6:uart_tx_string	16	static
-../Amscreen/Framework/Drivers/Src/uart.c:158:6:uart_isr	32	static
+../Amscreen/Framework/Drivers/Src/uart.c:207:32:usart_handle_to_uart_assignment_index	0	static
+../Amscreen/Framework/Drivers/Src/uart.c:64:6:uart_init	24	static
+../Amscreen/Framework/Drivers/Src/uart.c:97:6:uart_rx_byte	8	static
+../Amscreen/Framework/Drivers/Src/uart.c:109:6:uart_tx_byte	8	static
+../Amscreen/Framework/Drivers/Src/uart.c:127:6:uart_tx_buffer	16	static
+../Amscreen/Framework/Drivers/Src/uart.c:144:6:uart_tx_string	16	static
+../Amscreen/Framework/Drivers/Src/uart.c:159:6:uart_isr	32	static

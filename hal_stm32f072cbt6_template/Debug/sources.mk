@@ -24,9 +24,11 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Amscreen/Aplication/Libs/Src \
 Amscreen/Aplication/Tasks/Src \
 Amscreen/Framework/Drivers/Src \
 Amscreen/Framework/Libs/Src \
+Amscreen/Framework/Task/Src \
 Core/Src \
 Core/Startup \
 Drivers/STM32F0xx_HAL_Driver/Src \

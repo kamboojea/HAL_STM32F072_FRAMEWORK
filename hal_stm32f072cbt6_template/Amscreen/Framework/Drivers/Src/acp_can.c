@@ -150,8 +150,12 @@ bool acp_can_receive(acp_can_t * me, acp_packet_t * acp_packet)
 	CAN_RxHeaderTypeDef rx_header;
 	can_assignment_index_t can = can_handle_to_can_assignment_index(me->hcan);
 
-	if (HAL_CAN_GetRxMessage(me->hcan, ((can == CAN1_ASSIGNMENT_INDEX) ? CAN_RX_FIFO0 : CAN_RX_FIFO1), &rx_header, acp_packet->data) != HAL_OK)
+	HAL_StatusTypeDef status = HAL_CAN_GetRxMessage(me->hcan, ((can == CAN1_ASSIGNMENT_INDEX) ? CAN_RX_FIFO0 : CAN_RX_FIFO1), &rx_header, acp_packet->data);
+
+	if ( status != HAL_OK)
+	{
 		return false;
+	}
 
 	acp_packet->acp_header.ext_id = rx_header.ExtId;
 	acp_packet->len = rx_header.DLC;
