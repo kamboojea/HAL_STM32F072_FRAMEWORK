@@ -1,0 +1,3 @@
+../Amscreen/Framework/Drivers/Src/pca9546a.c:29:19:pca9546a_init	0	static
+../Amscreen/Framework/Drivers/Src/pca9546a.c:44:19:pca9546a_set_channel	24	static
+../Amscreen/Framework/Drivers/Src/pca9546a.c:73:19:pca9546a_get_channel	24	static

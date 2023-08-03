@@ -1,0 +1,13 @@
+acp_commands.c:83:21:cmd_reset	1
+acp_commands.c:165:21:cmd_set_flash_address	1
+acp_commands.c:427:16:cmd_echo_data	1
+acp_commands.c:304:21:cmd_get_uid_upper	1
+acp_commands.c:274:21:cmd_get_uid_lower	1
+acp_commands.c:118:21:cmd_get_board_id	1
+acp_commands.c:100:21:cmd_get_fw_version	1
+acp_commands.c:330:14:acp_cmd_error	1
+acp_commands.c:226:21:cmd_validate_storage	4
+acp_commands.c:181:21:cmd_write_flash_data	6
+acp_commands.c:137:21:cmd_erase_storage	2
+acp_commands.c:353:14:acp_command_add_application_commands	2
+acp_commands.c:376:14:acp_command_process	6

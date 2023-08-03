@@ -41,19 +41,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  18 .debug_aranges 00001058  00000000  00000000  0004c918  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_macro  0001d7cf  00000000  00000000  0004d970  2**0
+ 19 .debug_macro  0001d7d5  00000000  00000000  0004d970  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_line   0001f9b9  00000000  00000000  0006b13f  2**0
+ 20 .debug_line   0001f9b9  00000000  00000000  0006b145  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_str    00097e58  00000000  00000000  0008aaf8  2**0
+ 21 .debug_str    00097e71  00000000  00000000  0008aafe  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .comment      00000050  00000000  00000000  00122950  2**0
+ 22 .comment      00000050  00000000  00000000  0012296f  2**0
                   CONTENTS, READONLY
- 23 .debug_loc    0000e4d4  00000000  00000000  001229a0  2**0
+ 23 .debug_loc    0000e4d4  00000000  00000000  001229bf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 24 .debug_ranges 00000f08  00000000  00000000  00130e78  2**3
+ 24 .debug_ranges 00000f08  00000000  00000000  00130e98  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 25 .debug_frame  00003038  00000000  00000000  00131d80  2**2
+ 25 .debug_frame  00003038  00000000  00000000  00131da0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1772,19 +1772,20 @@ static uint8_t cmd_echo_data(acp_packet_t *ptr)
  8001acc:	08005288 	.word	0x08005288
 
 08001ad0 <vectors_to_ram>:
-#define TOP_OF_STACK						   	(uint32_t)(&_estack)
-#define RESET_HANDLER							(uint32_t)(&Reset_Handler)
 
-
+/**
+ * @brief Copies the interrupt vector table to RAM and remaps the SRAM into 0x0000 0000.
+ */
 void vectors_to_ram(void)
 {
  8001ad0:	b082      	sub	sp, #8
     // Copy interrupt vector table to the RAM.
     volatile uint32_t *vector_table = (volatile uint32_t *)0x20000000;
 
-    for(uint32_t idx = 0; idx < 48; idx++)
+    for(uint32_t idx = 0; idx < INTERRUPT_VECTOR_SIZE; idx++)
  8001ad2:	2200      	movs	r2, #0
  8001ad4:	e009      	b.n	8001aea <vectors_to_ram+0x1a>
+    {
     	vector_table[idx] = *(__IO uint32_t*)((uint32_t)APPLICATION_START_ADDR + (idx << 2));
  8001ad6:	0093      	lsls	r3, r2, #2
  8001ad8:	4911      	ldr	r1, [pc, #68]	; (8001b20 <vectors_to_ram+0x50>)
@@ -1795,10 +1796,11 @@ void vectors_to_ram(void)
  8001ae2:	4463      	add	r3, ip
  8001ae4:	6809      	ldr	r1, [r1, #0]
  8001ae6:	6019      	str	r1, [r3, #0]
-    for(uint32_t idx = 0; idx < 48; idx++)
+    for(uint32_t idx = 0; idx < INTERRUPT_VECTOR_SIZE; idx++)
  8001ae8:	3201      	adds	r2, #1
  8001aea:	2a2f      	cmp	r2, #47	; 0x2f
  8001aec:	d9f3      	bls.n	8001ad6 <vectors_to_ram+0x6>
+    }
 
     // Reset all AHB peripherals
     __HAL_RCC_AHB_FORCE_RESET();

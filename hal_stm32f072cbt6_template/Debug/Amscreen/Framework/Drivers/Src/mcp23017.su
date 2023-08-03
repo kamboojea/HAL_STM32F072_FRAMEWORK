@@ -1,0 +1,7 @@
+../Amscreen/Framework/Drivers/Src/mcp23017.c:42:26:mcp23017_read_register	24	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:57:26:mcp23017_write_register	24	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:74:26:mcp23017_set_register_bit	32	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:112:19:mcp23017_init	0	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:130:19:mcp23017_set_pin_direction	16	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:145:19:mcp23017_set_pin	16	static
+../Amscreen/Framework/Drivers/Src/mcp23017.c:160:19:mcp23017_get_pin	24	static

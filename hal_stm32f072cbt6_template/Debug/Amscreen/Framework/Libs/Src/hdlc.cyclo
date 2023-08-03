@@ -1,0 +1,4 @@
+hdlc.c:200:13:hdlc_reset	1
+hdlc.c:39:6:hdlc_init	1
+hdlc.c:56:6:hdlc_receive	12
+hdlc.c:152:6:hdlc_transmit	4

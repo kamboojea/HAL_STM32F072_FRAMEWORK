@@ -1,0 +1,8 @@
+sensor_task.c:140:13:sensor_task_initialize	1
+sensor_task.c:178:13:sensor_waiting_for_measurement	2
+sensor_task.c:157:13:sensor_task_start_measurement	3
+sensor_task.c:228:26:read_temperature_humidity	1
+sensor_task.c:197:13:sensor_task_read_measurement	1
+sensor_task.c:83:6:sensor_task	6
+sensor_task.c:112:14:sensor_task_read_temperature	1
+sensor_task.c:125:14:sensor_task_read_humidity	1
