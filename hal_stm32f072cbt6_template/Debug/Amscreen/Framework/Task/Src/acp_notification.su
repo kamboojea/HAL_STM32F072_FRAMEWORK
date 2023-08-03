@@ -1,8 +1,0 @@
-../Amscreen/Framework/Task/Src/acp_notification.c:217:13:create_start_up_notification	0	static
-../Amscreen/Framework/Task/Src/acp_notification.c:178:13:clear_acp_notifications	8	static
-../Amscreen/Framework/Task/Src/acp_notification.c:199:13:new_acp_notification	16	static
-../Amscreen/Framework/Task/Src/acp_notification.c:75:6:acp_notification_packet	0	static
-../Amscreen/Framework/Task/Src/acp_notification.c:91:6:acp_notification_add	16	static
-../Amscreen/Framework/Task/Src/acp_notification.c:59:6:acp_notification_initialise	8	static
-../Amscreen/Framework/Task/Src/acp_notification.c:117:6:acp_nofification_get	16	static
-../Amscreen/Framework/Task/Src/acp_notification.c:145:6:acp_notification_process_response	12	static

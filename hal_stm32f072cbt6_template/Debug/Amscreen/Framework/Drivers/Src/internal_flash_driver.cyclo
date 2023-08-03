@@ -1,9 +1,0 @@
-internal_flash_driver.c:332:13:flash_busy	3
-internal_flash_driver.c:355:13:eop_flag	3
-internal_flash_driver.c:379:26:is_flash_ready	3
-internal_flash_driver.c:38:19:flash_driver_init	2
-internal_flash_driver.c:69:19:flash_driver_erase	4
-internal_flash_driver.c:116:19:flash_driver_write_data	7
-internal_flash_driver.c:179:19:flash_driver_write_data_option_bytes	10
-internal_flash_driver.c:247:19:flash_driver_read_data	4
-internal_flash_driver.c:307:10:get_page	4

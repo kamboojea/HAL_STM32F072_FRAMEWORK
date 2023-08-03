@@ -1,4 +1,0 @@
-../Amscreen/Framework/Drivers/Src/sht4x_driver.c:33:19:sht4x_init	0	static
-../Amscreen/Framework/Drivers/Src/sht4x_driver.c:46:19:sht4x_start_temperature_humidity_measurement	24	static
-../Amscreen/Framework/Drivers/Src/sht4x_driver.c:60:19:sht4x_read_temperature_humidity_measurements	40	static
-../Amscreen/Framework/Drivers/Src/sht4x_driver.c:76:19:sht4x_soft_reset	24	static

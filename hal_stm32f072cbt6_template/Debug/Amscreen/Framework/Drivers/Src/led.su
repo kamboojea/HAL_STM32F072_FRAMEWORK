@@ -1,5 +1,0 @@
-../Amscreen/Framework/Drivers/Src/led.c:22:6:led_init	8	static
-../Amscreen/Framework/Drivers/Src/led.c:38:6:led_update	8	static
-../Amscreen/Framework/Drivers/Src/led.c:69:6:led_set_flash_rate	8	static
-../Amscreen/Framework/Drivers/Src/led.c:83:6:led_on	8	static
-../Amscreen/Framework/Drivers/Src/led.c:96:6:led_off	8	static

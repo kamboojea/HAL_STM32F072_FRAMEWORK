@@ -1,3 +1,0 @@
-pca9546a.c:29:19:pca9546a_init	1
-pca9546a.c:44:19:pca9546a_set_channel	3
-pca9546a.c:73:19:pca9546a_get_channel	6

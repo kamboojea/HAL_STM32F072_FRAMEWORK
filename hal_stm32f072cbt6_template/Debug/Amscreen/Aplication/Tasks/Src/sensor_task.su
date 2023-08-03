@@ -1,8 +1,0 @@
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:140:13:sensor_task_initialize	8	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:178:13:sensor_waiting_for_measurement	8	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:157:13:sensor_task_start_measurement	8	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:228:26:read_temperature_humidity	8	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:197:13:sensor_task_read_measurement	16	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:83:6:sensor_task	8	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:112:14:sensor_task_read_temperature	0	static
-../Amscreen/Aplication/Tasks/Src/sensor_task.c:125:14:sensor_task_read_humidity	0	static

@@ -1,3 +1,0 @@
-../Amscreen/Aplication/Tasks/Src/acp_can_task.c:108:13:set_acp_can_task_state	8	static
-../Amscreen/Aplication/Tasks/Src/acp_can_task.c:87:6:acp_can_task_tx_packet_side_a	8	static
-../Amscreen/Aplication/Tasks/Src/acp_can_task.c:63:6:acp_can_task	24	static

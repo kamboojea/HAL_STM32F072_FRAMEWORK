@@ -1,2 +1,0 @@
-../Amscreen/Framework/Drivers/Src/acp_packet.c:24:6:acp_packet_compare	8	static
-../Amscreen/Framework/Drivers/Src/acp_packet.c:46:6:acp_packet_copy	8	static
