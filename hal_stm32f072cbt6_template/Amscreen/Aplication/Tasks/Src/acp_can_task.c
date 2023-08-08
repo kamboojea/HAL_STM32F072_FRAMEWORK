@@ -140,18 +140,10 @@ void acp_can_task_service(void)
 #ifdef ENABLE_CAN_PACKETS_DEBUGGING
 		debug_printf("CB->Pfeb(A): %s", debug_acp_packet_to_string(&acp_packet));
 #endif
-		// If the packet is not directed to the WaferPMB, pass it onto the HWM
-		if (acp_packet.acp_header.destination == ACP_ADDRESS_PFEB)
-		{
 			if (!acp_notification_packet(&acp_packet))
 			{
 				acp_command_process(&acp_packet);
 				acp_can_task_tx_packet_side_a(&acp_packet);
 			}
-		}
-		else
-		{
-			//pc_comms_task_tx_packet_side_a(&acp_packet);
-		}
 	}
 }

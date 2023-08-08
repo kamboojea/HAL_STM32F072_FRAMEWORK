@@ -54,7 +54,6 @@ const acp_command_entry_t acp_framework_cmd_table []=
 	{ 0x000, NULL					}
 };
 
-
 // Application command table
 const acp_command_entry_t *application_command_table = NULL;
 
@@ -63,11 +62,9 @@ const acp_command_entry_t *application_command_table = NULL;
 
 static internal_flash_driver_t internal_flash_device;
 
-
 /*****************************************************************************
    Functions
 *****************************************************************************/
-
 
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_reset
@@ -87,7 +84,6 @@ static acp_result_t cmd_reset(acp_packet_t *acp_packet)
 }
 
 
-
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_get_fw_version
  *
@@ -105,7 +101,6 @@ static acp_result_t cmd_get_fw_version(acp_packet_t *acp_packet)
 }
 
 
-
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_get_board_id
  *
@@ -121,7 +116,6 @@ static acp_result_t cmd_get_board_id(acp_packet_t *acp_packet)
 	acp_packet->len = 8;
 	return ACP_SUCCESS;
 }
-
 
 
 /*----------------------------------------------------------------------------
@@ -152,7 +146,6 @@ static acp_result_t cmd_erase_storage(acp_packet_t *acp_packet)
 }
 
 
-
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_set_flash_address
  *
@@ -166,7 +159,6 @@ static acp_result_t cmd_set_flash_address(acp_packet_t *acp_packet)
 {
 	return ACP_SUCCESS;
 }
-
 
 
 /*----------------------------------------------------------------------------
@@ -187,7 +179,7 @@ static acp_result_t cmd_write_flash_data(acp_packet_t *acp_packet)
 	}
 
 	uint32_t flash_write_ptr = (acp_packet->data[0] << 8) | acp_packet->data[1];
-	flash_write_ptr += internal_flash_device.start_sector;
+	flash_write_ptr += STORAGE_AREA_START_ADDRESS;
 	acp_packet->len -= 2;
 
 	if (((flash_write_ptr + acp_packet->len) > (FLASH_BANK1_END + 1)) || (flash_write_ptr & 0x01))
@@ -199,8 +191,7 @@ static acp_result_t cmd_write_flash_data(acp_packet_t *acp_packet)
 
 	if (memcmp((uint8_t *)flash_write_ptr, (uint8_t *)&acp_packet->data[2], acp_packet->len) != 0)
 	{
-
-		HAL_StatusTypeDef status = internal_flash_device.write(flash_write_ptr, (uint16_t *)&acp_packet->data[2], acp_packet->len);
+		HAL_StatusTypeDef status = internal_flash_device.write(flash_write_ptr, (uint8_t *)&acp_packet->data[2], acp_packet->len);
 
 		if (status != HAL_OK)
 		{
@@ -212,6 +203,7 @@ static acp_result_t cmd_write_flash_data(acp_packet_t *acp_packet)
 	acp_packet->len = 0;
 	return (ACP_SUCCESS);
 }
+
 
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_validate_storage
@@ -291,7 +283,6 @@ static acp_result_t cmd_get_uid_lower(acp_packet_t *acp_packet)
 }
 
 
-
 /*----------------------------------------------------------------------------
  *  Routine:        cmd_get_uid_upper
  *
@@ -312,7 +303,6 @@ static acp_result_t cmd_get_uid_upper(acp_packet_t *acp_packet)
 	acp_packet->len = 4;
 	return ACP_SUCCESS;
 }
-
 
 
 /*----------------------------------------------------------------------------

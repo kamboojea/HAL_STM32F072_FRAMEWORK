@@ -15,12 +15,10 @@
 #include "internal_flash_driver.h"
 #include "millis.h"
 
-
 /*****************************************************************************
    Defines
 ******************************************************************************/
 #define SAMPLE_TIMEOUT 50
-
 
 /*****************************************************************************
    Function Prototypes
@@ -30,17 +28,15 @@ static bool flash_busy(void);
 static bool eop_flag(void);
 static HAL_StatusTypeDef is_flash_ready(void);
 
-
 /*****************************************************************************
    Functions
 ******************************************************************************/
-
 HAL_StatusTypeDef flash_driver_init(
 		                            internal_flash_driver_t *dev,
 		                            uint32_t start_sector,
 									uint32_t num_sectors,
 									HAL_StatusTypeDef (*erase)(internal_flash_driver_t *dev),
-                                    HAL_StatusTypeDef (*write)(uint32_t address, uint16_t *data, uint16_t length),
+                                    HAL_StatusTypeDef (*write)(uint32_t address, uint8_t *data, uint16_t length),
 									HAL_StatusTypeDef (*write_option_byte)(OptionByteData* option_bytes, uint8_t num_bytes),
                                     HAL_StatusTypeDef (*read)(uint32_t address, volatile uint16_t *data, uint16_t length)
 									)
@@ -107,13 +103,13 @@ HAL_StatusTypeDef flash_driver_erase(internal_flash_driver_t *dev)
  * writes the data in half-word (16-bit) format to the flash memory. The data is
  * swapped to ensure correct byte order.
  *
- * @param start_page_address The starting address of the flash memory.
+ * @param destination_start_page_address The starting address of the flash memory.
  * @param data Pointer to the data array to be written to flash.
  * @param numberofbytes The number of bytes to be written.
  *
  * @return HAL_StatusTypeDef HAL_OK if the write operation is successful, an error code otherwise.
  */
-HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint16_t *data, uint16_t numberofbytes)
+HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint8_t *data, uint16_t numberofbytes)
 {
     /* Counter for the number of bytes written so far */
     int sofar = 0;
@@ -123,119 +119,129 @@ HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint16_t 
 
     if(status != HAL_OK)
     {
-    	return status;
+        return status;
     }
 
-    while (sofar < (numberofbytes / 2))  // Dividing by 2 to write 2 bytes per iteration
+    while (sofar < (numberofbytes - 1)) // Ensure we don't overrun the data buffer
     {
         /* Prepare the 16-bit data to write */
-        uint16_t halfword_data = data[sofar];
+        uint16_t halfword_data = (uint16_t)((data[sofar + 1] << 8) | data[sofar]);
 
         status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
 
         if (status != HAL_OK)
-	    {
-		    /* Error occurred while writing data in Flash memory. Return the HAL error code */
-			return HAL_FLASH_GetError();
-		}
+        {
+            /* Error occurred while writing data in Flash memory. Return the HAL error code */
+            return HAL_FLASH_GetError();
+        }
 
         /* Increment address index and written bytes count */
         start_page_address += 2;
-        sofar++;
-		status = is_flash_ready();
+        sofar += 2;
 
-		if (status != HAL_OK)
+        status = is_flash_ready();
+
+        if (status != HAL_OK)
         {
-			return status;
+            return status;
         }
     }
-
 
     /* If the number of bytes is odd, write the remaining byte */
     if (numberofbytes & 1)
     {
         /* Prepare the 16-bit data to write with padding byte (0xFF) */
-        uint16_t halfword_data = (data[sofar] & 0xFF) | 0xFFFF;
+        uint16_t halfword_data = (uint16_t)((data[sofar] << 8 ) | 0xFF);
 
-    	status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
+        status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, start_page_address, halfword_data);
 
-    	if (status != HAL_OK)
+        if (status != HAL_OK)
         {
-    		/* Error occurred while writing data in Flash memory. Return the HAL error code */
-			return HAL_FLASH_GetError();
-        }
-        else
-        {
-    		/* Increment address index and written bytes count */
-			start_page_address += 2;
+            /* Error occurred while writing data in Flash memory. Return the HAL error code */
+            return HAL_FLASH_GetError();
         }
     }
-
     // Lock the flash to disable the flash control register access
     return HAL_FLASH_Lock();
 }
 
 
+/**
+ * @brief Writes data to the option bytes of the FLASH memory on the STM32F072 microcontroller.
+ *
+ * This function performs the following sequence:
+ *   - Unlocks the FLASH memory.
+ *   - Unlocks the option bytes.
+ *   - Erases existing option bytes.
+ *   - Programs the new option bytes with the specified data.
+ *   - Locks the option bytes and FLASH memory back.
+ *
+ * @param option_bytes Pointer to an array of OptionByteData structures containing the address and data for each option byte.
+ * @param num_bytes The number of option bytes to write.
+ *
+ * @retval HAL_OK if the option bytes were successfully written.
+ * @retval HAL_ERROR if there was an error during any of the operations.
+ */
 HAL_StatusTypeDef flash_driver_write_data_option_bytes(OptionByteData* option_bytes, uint8_t num_bytes)
 {
+    // Check if the input parameters are valid
     if (option_bytes == NULL || num_bytes == 0)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if the parameters are not valid
     }
 
     // Unlock the FLASH memory
     if (HAL_FLASH_Unlock() != HAL_OK)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if FLASH memory unlock fails
     }
 
     // Unlock the option bytes
     if (HAL_FLASH_OB_Unlock() != HAL_OK)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if option bytes unlock fails
     }
 
-    // Erase option bytes
+    // Erase existing option bytes
     if (HAL_FLASHEx_OBErase() != HAL_OK)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if option bytes erase fails
     }
 
-    // Program each option byte
+    // Program each option byte with the given data
     for (uint8_t i = 0; i < num_bytes; i++)
     {
-        FLASH_OBProgramInitTypeDef option_byte;
-        option_byte.DATAAddress = option_bytes[i].address;
-        option_byte.DATAData = option_bytes[i].data;
-        option_byte.OptionType = OPTIONBYTE_DATA;
+        FLASH_OBProgramInitTypeDef option_byte; // Declare option byte structure
+        option_byte.DATAAddress = option_bytes[i].address; // Set the address for the option byte
+        option_byte.DATAData = option_bytes[i].data;       // Set the data for the option byte
+        option_byte.OptionType = OPTIONBYTE_DATA;          // Set the option type as DATA
 
         if (HAL_FLASHEx_OBProgram(&option_byte) != HAL_OK)
         {
-            return HAL_ERROR;
+            return HAL_ERROR; // Return error if option byte programming fails
         }
     }
 
     // Lock the option bytes
     if (HAL_FLASH_OB_Lock() != HAL_OK)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if option bytes lock fails
     }
 
     // Lock the FLASH memory
     if (HAL_FLASH_Lock() != HAL_OK)
     {
-        return HAL_ERROR;
+        return HAL_ERROR; // Return error if FLASH memory lock fails
     }
 
-    return HAL_OK;
+    return HAL_OK; // Return success if all operations were successful
 }
-
 
 
 /**
  * @brief  Read data from flash memory
  *
- * @param  start_page_address Start address of the page from where the reading starts in flash
+ * @param  destination_destination_start_page_address Start address of the page from where the reading starts in flash
  * @param  rx_buffer           Pointer to a buffer where read data will be stored
  * @param  numberofwords   Number of words to read from flash
  *
@@ -244,7 +250,7 @@ HAL_StatusTypeDef flash_driver_write_data_option_bytes(OptionByteData* option_by
  *         If the function reaches the end of flash memory before reading the specified number
  *         of words, it will stop reading.
  */
-HAL_StatusTypeDef flash_driver_read_data(uint32_t start_page_address, volatile uint16_t *rx_buffer, uint16_t numberofwords)
+HAL_StatusTypeDef flash_driver_read_data(uint32_t destination_destination_start_page_address, volatile uint16_t *rx_buffer, uint16_t numberofwords)
 {
 	 // Check if the device instance is valid
 	if (rx_buffer == NULL)
@@ -263,13 +269,13 @@ HAL_StatusTypeDef flash_driver_read_data(uint32_t start_page_address, volatile u
 			return status;
 		}
 
-        // Dereference the start_page_address, read the 32-bit word,
+        // Dereference the destination_destination_start_page_address, read the 32-bit word,
         // and assign it to the location pointed to by rx_buffer
-    	uint16_t data = *(__IO uint16_t *)start_page_address;
+    	uint16_t data = *(__IO uint16_t *)destination_destination_start_page_address;
         uint16_t swapped_data = ((data & 0xFF) << 8) | ((data >> 8) & 0xFF);
 
-        // Move to the next word in flash memory by adding 4 (size of uint32_t) to start_page_address
-        start_page_address += 2;
+        // Move to the next word in flash memory by adding 4 (size of uint32_t) to destination_destination_start_page_address
+        destination_destination_start_page_address += 2;
 
         // Move to the next location in rx_buffer
         rx_buffer[index] = swapped_data;

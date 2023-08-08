@@ -92,7 +92,7 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN_Init();
   MX_I2C2_Init();
-  MX_IWDG_Init();
+ // MX_IWDG_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
@@ -104,7 +104,7 @@ int main(void)
   {
 	  app_task();
 	  // Refresh the Watchdog timer
-	  HAL_IWDG_Refresh(&hiwdg);
+//	  HAL_IWDG_Refresh(&hiwdg);
 
     /* USER CODE END WHILE */
 

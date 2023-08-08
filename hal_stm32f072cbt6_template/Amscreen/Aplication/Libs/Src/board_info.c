@@ -11,7 +11,7 @@ const board_info_t __attribute((section(".version"))) board_info =
     // board ID, the format should be ****BBBBBBBB****,
     // where BBBBBBBB if the board ID. For example the
     // board ID for the PCB_NAME is ****201849PM****
-    "****TEMPLATE****",
+    "****206878PF****",
 
     // Application version, the format should be ****MM.mm.bb****
     // where:
@@ -19,7 +19,7 @@ const board_info_t __attribute((section(".version"))) board_info =
     //    mm    Minor
     //    PP    Patch
     //
-    "####00.00.00####",
+    "####00.00.01####",
 };
 
 

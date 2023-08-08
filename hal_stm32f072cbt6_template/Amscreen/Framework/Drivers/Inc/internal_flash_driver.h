@@ -82,7 +82,7 @@ struct flash_s {
     uint32_t start_sector;
     uint32_t num_sectors;
     HAL_StatusTypeDef (*erase)(internal_flash_driver_t *dev);
-    HAL_StatusTypeDef (*write)(uint32_t address, uint16_t *data, uint16_t numberofbytes);
+    HAL_StatusTypeDef (*write)(uint32_t address, uint8_t *data, uint16_t numberofbytes);
     HAL_StatusTypeDef (*read)(uint32_t address, volatile uint16_t *data, uint16_t length);
     HAL_StatusTypeDef (*write_option_byte)(OptionByteData* option_bytes, uint8_t num_bytes);
 };
@@ -92,12 +92,12 @@ struct flash_s {
 ******************************************************************************/
 HAL_StatusTypeDef flash_driver_init(internal_flash_driver_t *dev, uint32_t start_sector, uint32_t num_sectors,
 		                            HAL_StatusTypeDef (*erase)(internal_flash_driver_t *dev),
-		                            HAL_StatusTypeDef (*write)(uint32_t address, uint16_t *data, uint16_t numberofbytes),
+		                            HAL_StatusTypeDef (*write)(uint32_t address, uint8_t *data, uint16_t numberofbytes),
 									HAL_StatusTypeDef (*write_option_byte)(OptionByteData* option_bytes, uint8_t num_bytes),
                                     HAL_StatusTypeDef (*read)(uint32_t address, volatile uint16_t *data, uint16_t numberofwords)
 									);
 HAL_StatusTypeDef flash_driver_erase(internal_flash_driver_t *dev);
-HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint16_t *data, uint16_t numberofbytes);
+HAL_StatusTypeDef flash_driver_write_data(uint32_t start_page_address, uint8_t *data, uint16_t numberofbytes);
 HAL_StatusTypeDef flash_driver_write_data_option_bytes(OptionByteData* option_bytes, uint8_t num_bytes);
 HAL_StatusTypeDef flash_driver_read_data(uint32_t start_page_address, volatile uint16_t *rx_buffer, uint16_t numberofwords);
 
